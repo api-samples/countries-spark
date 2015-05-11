@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -33,8 +34,14 @@ public class SparkCountries {
 
     public static void main(final String ... args) throws Exception {
         get("/countries/:cca2", (req, res) -> {
+            final String cca2 = req.params(":cca2");
             res.type("text/json");
-            return COUNTRIES.get(req.params(":cca2"));
+            if (COUNTRIES.containsKey(cca2)) {
+                return COUNTRIES.get(req.params(":cca2"));
+            } else {
+                res.status(404);
+                return Collections.emptyMap();
+            }
         }, JSON::writeValueAsString);
     }
 
