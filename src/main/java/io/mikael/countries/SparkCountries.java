@@ -16,7 +16,7 @@ import static spark.Spark.get;
 
 public class SparkCountries {
 
-    private final static Map<String, Country> COUNTRIES;
+    private final static Map<String, Map> COUNTRIES;
 
     private final static ObjectMapper JSON;
 
@@ -24,9 +24,8 @@ public class SparkCountries {
         JSON = new ObjectMapper();
         JSON.enable(SerializationFeature.INDENT_OUTPUT);
         try (final InputStream is = SparkCountries.class.getClassLoader().getResourceAsStream("countries.json")) {
-            final List<Country> input = JSON.readValue(is, new TypeReference<List<Country>>() { });
-            COUNTRIES = input.stream().collect(
-                    toMap(c -> c.cca2, Function.identity(), (a, b) -> a));
+            final List<Map> input = JSON.readValue(is, new TypeReference<List<Map>>() { });
+            COUNTRIES = input.stream().collect(toMap(c -> c.get("cca2").toString(), c -> c, (a, b) -> a));
         } catch (final IOException e) {
             throw new RuntimeException("unable to parse countries", e);
         }
@@ -37,7 +36,7 @@ public class SparkCountries {
             final String cca2 = req.params(":cca2");
             res.type("text/json");
             if (COUNTRIES.containsKey(cca2)) {
-                return COUNTRIES.get(req.params(":cca2"));
+                return COUNTRIES.get(cca2);
             } else {
                 res.status(404);
                 return Collections.emptyMap();
