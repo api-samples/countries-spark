@@ -7,6 +7,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import spark.Service;
 import spark.Spark;
 
 import static com.jayway.restassured.RestAssured.when;
@@ -28,7 +29,7 @@ public class CountriesTest {
 
     @Before
     public void setUp() {
-        RestAssured.port = Spark.SPARK_DEFAULT_PORT;
+        RestAssured.port = Service.SPARK_DEFAULT_PORT;
     }
 
     @Test
